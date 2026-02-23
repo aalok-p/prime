@@ -3,43 +3,16 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 0, 0, 0;
-  --background-end-rgb: 0, 0, 0;
+  --foreground-rgb: 47, 49, 52;
+  --background-start-rgb: 248, 244, 214;
+  --background-end-rgb: 243, 239, 213;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-    to bottom,
-    transparent,
-    rgb(var(--background-end-rgb))
-  ) rgb(var(--background-start-rgb));
-}
-
-/* Terminal style */
-.typing-effect {
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 2px solid transparent;
-}
-
-/* Matrix background animation */
-@keyframes matrixRain {
-  0% {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.3;
-  }
-  100% {
-    transform: translateY(1000%);
-    opacity: 0;
-  }
-}
-
-.matrix-char {
-  animation: matrixRain 8s linear infinite;
-  animation-delay: calc(var(--delay) * 1s);
+    180deg,
+    rgb(var(--background-start-rgb)) 0%,
+    rgb(var(--background-end-rgb)) 100%
+  );
 }

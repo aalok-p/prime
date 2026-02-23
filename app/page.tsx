@@ -1,328 +1,354 @@
 "use client"
 
-import { useState, type FormEvent, useEffect } from "react"
-import { Github, Linkedin, Mail, X } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Moon, Sun } from "lucide-react"
+import Image from "next/image"
+
+type GithubRepo = {
+  id: number
+  name: string
+  html_url: string
+  description: string | null
+  stargazers_count: number
+  language: string | null
+  updated_at: string
+}
+
+type GithubData = {
+  user: {
+    name: string | null
+    login: string
+    avatar_url: string
+    html_url: string
+    public_repos: number
+    followers: number
+  }
+  repos: GithubRepo[]
+}
 
 export default function Page() {
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [message, setMessage] = useState("")
-  const [sending, setSending] = useState(false)
-  const [sentStatus, setSentStatus] = useState<null | "success" | "error">(null)
-  const [typedText, setTypedText] = useState("")
-  const fullText = "whoami | experience.txt | projects.ls | contact_me.sh"
-
+  const [isDark, setIsDark] = useState(false)
+  const [githubData, setGithubData] = useState<GithubData | null>(null)
+  const [githubError, setGithubError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (typedText.length < fullText.length) {
-      const timeout = setTimeout(() => {
-        setTypedText(fullText.slice(0, typedText.length + 1))
-      }, 100)
-      return () => clearTimeout(timeout)
-    }
-  }, [typedText])
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    setSending(true)
-    
-    try {
-      const response = await fetch('/api/send-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, message }),
-      })
-      
-      if (response.ok) {
-        setSentStatus("success")
-        // Reset form fields
-        setName("")
-        setEmail("")
-        setMessage("")
-      } else {
-        setSentStatus("error")
+    let active = true
+    const loadGithub = async () => {
+      try {
+        const response = await fetch("/api/github")
+        if (!response.ok) {
+          throw new Error("Failed to load GitHub data.")
+        }
+        const data = (await response.json()) as GithubData
+        if (active) {
+          setGithubData(data)
+        }
+      } catch (error) {
+        if (active) {
+          setGithubError(
+            error instanceof Error ? error.message : "Failed to load GitHub data."
+          )
+        }
       }
-    } catch (error) {
-      setSentStatus("error")
-      console.error('Failed to send message:', error)
-    } finally {
-      setSending(false)
-      // Reset status after 5 seconds
-      setTimeout(() => setSentStatus(null), 5000)
     }
-  }
+    loadGithub()
+    return () => {
+      active = false
+    }
+  }, [])
 
   return (
-    <div className="min-h-screen bg-black text-green-400 font-mono">
-      {/*terminal window */}
-      <div className="bg-zinc-900 border-b border-zinc-700 p-2 flex items-center gap-2">
-        <div className="flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-red-500"></div>
-          <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-          <div className="w-3 h-3 rounded-full bg-green-500"></div>
-        </div>
-        <div className="flex-1 text-center text-sm text-zinc-400">PRIMUS@portfolio ~ /home/user</div>
-      </div>
-
-      <main className="p-4 md:p-8 max-w-2xl mx-auto">
-        <div className="space-y-6">
-          {/*command log*/}
-          <div className="bg-zinc-900/50 p-4 rounded-md border border-zinc-800">
-            <div className="flex items-center gap-2 text-purple-400">
-              <span className="text-pink-500">$</span>
-              <p className="typing-effect">{typedText}</p>
-              <span className={`h-5 w-2 bg-cyan-400 inline-block ${typedText.length < fullText.length ? 'animate-pulse' : ''}`} />
+    <div
+      className={`min-h-screen ${isDark ? "text-[#c8bca5]" : "bg-[#f8f4d6] text-[#2f3134]"}`}
+      style={
+        isDark
+          ? {
+              backgroundColor: "#181d22",
+              backgroundImage:
+                "linear-gradient(180deg, #1b2128 0%, #171d22 100%)",
+              backgroundSize: "100% 100%",
+            }
+          : undefined
+      }
+    >
+      <main className="px-4 py-10 md:py-16 max-w-3xl mx-auto">
+        <header className="space-y-9">
+            <nav className={`flex items-center justify-between rounded-xl px-4 py-3 text-base ${isDark ? "bg-[#12171d] text-[#c8bca5]" : "text-[#64615b]"}`}>
+              <div className="flex items-center gap-6">
+              <a href="#" className={`transition-colors ${isDark ? "hover:text-[#8ed26f]" : "hover:text-[#2f3134]"}`}>
+                Home
+              </a>
+              <a href="#" className={`transition-colors ${isDark ? "hover:text-[#8ed26f]" : "hover:text-[#2f3134]"}`}>
+                Notes
+              </a>
+              <a href="#" className={`transition-colors ${isDark ? "hover:text-[#8ed26f]" : "hover:text-[#2f3134]"}`}>
+                Blog
+              </a>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsDark((prev) => !prev)}
+                className={`rounded-md p-1.5 transition-colors ${isDark ? "text-[#8ed26f] hover:bg-[#1d252d]" : "text-[#2f3134] hover:bg-[#e9e3c4]"}`}
+                aria-label="Toggle theme"
+              >
+                {isDark ? <Sun size={14} /> : <Moon size={14} />}
+              </button>
+            </nav>
+            <div className="flex items-center gap-5">
+            <Image
+              src="/nagi-hq.png"
+              alt="Alok "
+              width={112}
+              height={112}
+              quality={100}
+              unoptimized
+              priority
+              sizes="56px"
+              className="h-14 w-14 rounded-full border border-[#cfceb5] object-cover"
+            />
+            <h1 className="text-3xl md:text-4xl font-semibold">Alok</h1>
             </div>
-          </div>
+        </header>
 
-          {/*hello sec*/}
-          <section className="space-y-2 bg-zinc-900/30 p-4 rounded-md border border-cyan-900/50">
-            <div className="flex items-center gap-2">
-              <span className="text-cyan-500">$</span>
-              <p className="text-cyan-300">whoami</p>
+        <div className="mt-10 space-y-8">
+          <section className="grid gap-4 md:grid-cols-[1.2fr,0.8fr]">
+            <div className="p-1">
+              <p className={`mt-2 text-lg ${isDark ? "text-[#c8bca5]" : "text-[#64615b]"}`}>
+                I enjoy turning research into friendly tools, from agent workflows to applied ML systems, and I love
+                reading more about tranformers, LLM training and inference optimization .
+              </p>
+              <div className="mt-4 flex flex-wrap gap-4 text-base">
+                <a href="https://github.com/aalok-p" target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1 transition-colors ${isDark ? "text-[#8ed26f] hover:text-[#a4de8a]" : "text-blue-600 hover:text-blue-700"}`}>
+                  GitHub <span aria-hidden="true">↗</span>
+                </a>
+                <a href="https://www.linkedin.com/in/11alok/" target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1 transition-colors ${isDark ? "text-[#8ed26f] hover:text-[#a4de8a]" : "text-blue-600 hover:text-blue-700"}`}>
+                  LinkedIn <span aria-hidden="true">↗</span>
+                </a>
+                <a href="https://www.kaggle.com/primus11" target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1 transition-colors ${isDark ? "text-[#8ed26f] hover:text-[#a4de8a]" : "text-blue-600 hover:text-blue-700"}`}>
+                  Kaggle <span aria-hidden="true">↗</span>
+                </a>
+                <a href="https://drive.google.com/file/d/1GCaRog01oYG5qqrbSXCzJD8aNUNV-Ymr/view?usp=sharing" target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1 transition-colors ${isDark ? "text-[#8ed26f] hover:text-[#a4de8a]" : "text-blue-600 hover:text-blue-700"}`}>
+                  Resume <span aria-hidden="true">↗</span>
+                </a>
+              </div>
             </div>
-            <div className="pl-5 space-y-1">
-              <h1 className="text-yellow-300 text-xl">
-                hi, i am <span className="underline">ALOK</span>!
-              </h1>
-              <p className="text-cyan-100">pre final year undergrad, studying computer science.</p>
-              <p className="text-cyan-200">mainly work in <span className="text-green-300">machine learning</span> and <span className="text-purple-300">AI Agents + LLM&apos;s</span> too (more and more gpu&apos;s)😕</p>
+            <div className={`rounded-2xl p-6 shadow-sm ${isDark ? "border border-[#2e3a31] bg-[#1a2228]" : "border border-[#cfceb5] bg-[#f5f5dc]"}`}>
+              <p className={`text-xs uppercase tracking-[0.3em] ${isDark ? "text-[#8ed26f]" : "text-[#8c8779]"}`}>Highlights</p>
+              <div className="mt-4 grid gap-3">
+                <div className={`flex items-center justify-between rounded-xl px-4 py-3 ${isDark ? "border border-[#2e3a31] bg-[#12181d]" : "border border-[#c1bda7] bg-[#f3efd5]"}`}>
+                  <span className={`text-base ${isDark ? "text-[#c8bca5]" : "text-[#8c8779]"}`}>Public repos</span>
+                  <span className={`text-lg font-semibold ${isDark ? "text-[#e6dcc8]" : "text-[#2f3134]"}`}>
+                    {githubData ? githubData.user.public_repos : "—"}
+                  </span>
+                </div>
+                <div className={`flex items-center justify-between rounded-xl px-4 py-3 ${isDark ? "border border-[#2e3a31] bg-[#12181d]" : "border border-[#c1bda7] bg-[#f3efd5]"}`}>
+                  <span className={`text-base ${isDark ? "text-[#c8bca5]" : "text-[#8c8779]"}`}>Followers</span>
+                  <span className={`text-lg font-semibold ${isDark ? "text-[#e6dcc8]" : "text-[#2f3134]"}`}>
+                    {githubData ? githubData.user.followers : "—"}
+                  </span>
+                </div>
+              </div>
             </div>
           </section>
 
-          {/*exp*/}
-          <section className="space-y-2 bg-zinc-900/30 p-4 rounded-md border border-green-900/50">
-            <div className="flex items-center gap-2">
-              <span className="text-green-600">$</span>
-              <p className="text-green-300">cat experience.txt</p>
-            </div>
-            <div className="pl-5 space-y-1">
-              <h2 className="text-green-300 text-lg">experience</h2>
-              <ul className="space-y-1">
-                <li className="border-l-2 border-green-600 pl-3 py-1 transition-all hover:border-l-4 hover:bg-green-900/20">
-                  <span className="text-green-600">{">"}</span> AR Developer @ GDG KIET <span className="text-yellow-300">[jan 24&apos; - present]</span>
-                </li>
-                <li className="border-l-2 border-green-600 pl-3 py-1 transition-all hover:border-l-4 hover:bg-green-900/20">
-                  <span className="text-green-600">{">"}</span> Intern @ TBI KIET <span className="text-yellow-300">[may 24&apos; - june 24&apos;]</span>
-                </li>
-                <li className="border-l-2 border-green-600 pl-3 py-1 transition-all hover:border-l-4 hover:bg-green-900/20">
-                  <span className="text-green-600">{">"}</span> Gaudmire @ buildspace <span className="text-yellow-300">[may 24&apos; - july 24&apos;]</span>
-                </li>
-              </ul>
-            </div>
-          </section>
-
-          {/*projects*/}
-          <section className="space-y-2 bg-zinc-900/30 p-4 rounded-md border border-purple-900/50">
-            <div className="flex items-center gap-2">
-              <span className="text-purple-600">$</span>
-              <p className="text-purple-300">ls -la projects/</p>
-            </div>
-            <div className="pl-5 space-y-1">
-              <h2 className="text-purple-300 text-lg">projects</h2>
-              <ul className="space-y-3">
-                <li className="group">
-                  <div className="flex items-start gap-2">
-                    <span className="text-purple-600 mt-1">{">"}</span>
-                    <div>
-                      <a
-                        href="https://github.com/11PRIMUS/meera_1"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline text-fuchsia-300 hover:text-fuchsia-200 transition-colors"
-                      >
-                        MEERA - AI Companion
-                      </a>
-                      <p className="text-zinc-300">Meera isn&apos;t just another chatbot. She&apos;s an emotional companion made to truly listen and remembe</p>
-                    </div>
-                  </div>
-                </li>
-                <li className="group">
-                  <div className="flex items-start gap-2">
-                    <span className="text-purple-600 mt-1">{">"}</span>
-                    <div>
-                      <a
-                        href="https://github.com/codeEnthusiast21/BrightWalkHackTU"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline text-fuchsia-300 hover:text-fuchsia-200 transition-colors"
-                      >
-                        BrightWalk
-                      </a>
-                      <p className="text-zinc-300">Visual assistant for visually impaired person, It describes what it sees using SkunkworksAI BakLLaVA-1 model via llama.cpp and narrates the text using Web Speech API.</p>
-                    </div>
-                  </div>
-                </li>
-                <li className="group">
-                  <div className="flex items-start gap-2">
-                    <span className="text-purple-600 mt-1">{">"}</span>
-                    <div>
-                      <a
-                        href="https://github.com/11PRIMUS/SAR-image-Colorization"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline text-fuchsia-300 hover:text-fuchsia-200 transition-colors"
-                      >
-                        SAR image Colorization
-                      </a>
-                      <p className="text-zinc-300">uses custom GAN&apos;s and GDAL to color the grayscale SAR image with reduced speckle noise and image distortion</p>
-                    </div>
-                  </div>
-                </li>
-                <li className="group">
-                  <div className="flex items-start gap-2">
-                    <span className="text-purple-600 mt-1">{">"}</span>
-                    <div>
-                      <a
-                        href="https://github.com/11PRIMUS/Pratham"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline text-fuchsia-300 hover:text-fuchsia-200 transition-colors"
-                      >
-                        Pratham
-                      </a>
-                      <p className="text-zinc-300">converts 2D matrices into a 1D vector Output Layer to mimic the changes in healthy mri scans and by using cnn classifies the cancer(brain, breast, skin)</p>
-                    </div>
-                  </div>
-                </li>
-                <li className="group">
-                  <div className="flex items-start gap-2">
-                    <span className="text-purple-600 mt-1">{">"}</span>
-                    <div>
-                      <a
-                        href="https://github.com/Avdhesh-Varshney/AI-Code"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline text-fuchsia-300 hover:text-fuchsia-200 transition-colors"
-                      >
-                        AI-Code
-                      </a>
-                      <p className="text-zinc-300">an open-source project designed to help individuals learn and understand fundamental code implementations of various AI algorithms</p>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </section>
-
-          {/*contact */}
-          <section className="space-y-2 bg-zinc-900/30 p-4 rounded-md border border-green-900/50">
-            <div className="flex items-center gap-2">
-              <span className="text-green-500">$</span>
-              <p className="text-green-300">sudo ./contact_me.sh</p>
-            </div>
-            <div className="pl-5 space-y-4">
-              <h2 className="text-green-300 text-lg">Contact Me</h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm text-green-200">
-                    Name:
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    placeholder="Alokk"
-                    className="w-full bg-zinc-800 border border-green-800 text-green-100 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm text-green-200">
-                    Email:
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    placeholder="alok@example.com"
-                    className="w-full bg-zinc-800 border border-green-800 text-green-100 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="message" className="block text-sm text-green-200">
-                    Message:
-                  </label>
-                  <textarea
-                    id="message"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    required
-                    placeholder="Your message here..."
-                    className="w-full bg-zinc-800 border border-green-800 text-green-100 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    rows={4}
-                  ></textarea>
-                </div>
-                <button
-                  type="submit"
-                  disabled={sending}
-                  className={`bg-gradient-to-r from-green-600 to-light green-600 text-white px-4 py-2 rounded hover:from-green-500 hover:to-light green-500 transition-all ${sending ? 'cursor-not-allowed opacity-70' : ''}`}
+          <section className={`rounded-2xl p-6 shadow-sm ${isDark ? "border border-[#2e3a31] bg-[#1a2228]" : "border border-[#cfceb5] bg-[#f5f5dc]"}`}>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h2 className={`mt-2 text-2xl font-semibold ${isDark ? "text-[#e6dcc8]" : "text-[#2f3134]"}`}>projects & activity</h2>
+                <p className={`mt-1 text-base ${isDark ? "text-[#c8bca5]" : "text-[#64615b]"}`}>
+                  pinned repositories for{" "}
+                  <span className={`font-medium ${isDark ? "text-[#e6dcc8]" : "text-[#2f3134]"}`}>
+                    {githubData?.user.login ?? "aalok-p"}
+                  </span>
+                  .
+                </p>
+              </div>
+              {githubData?.user.avatar_url && (
+                <a
+                  href={githubData.user.html_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex items-center gap-3 rounded-full px-4 py-2 text-base transition-colors ${isDark ? "border border-[#2e3a31] bg-[#12181d] text-[#c8bca5] hover:text-[#8ed26f]" : "border border-[#c1bda7] bg-[#f3efd5] text-[#64615b] hover:text-[#2f3134]"}`}
                 >
-                  <div className="flex items-center justify-center">
-                    {sending ? 'Sending...' : 'Send Message'}
-                    {sending && <span className="ml-2 animate-pulse">⚙️</span>}
-                  </div>
-                </button>
-                
-                {sentStatus === "success" && (
-                  <div className="bg-green-900/50 border border-green-500 text-green-200 px-4 py-2 rounded animate-fadeIn">
-                    Message sent successfully! I&apos;ll get back to you soon.
-                  </div>
-                )}
-                
-                {sentStatus === "error" && (
-                  <div className="bg-red-900/50 border border-red-500 text-red-200 px-4 py-2 rounded animate-fadeIn">
-                    Failed to send message. Please try again or contact me directly via email.
-                  </div>
-                )}
-              </form>
+                  <Image
+                    src={githubData.user.avatar_url}
+                    alt={`${githubData.user.login} avatar`}
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 rounded-full border border-[#cfceb5]"
+                  />
+                  <span>here I am</span>
+                </a>
+              )}
             </div>
+            {githubError && <p className="mt-4 text-base text-rose-600">{githubError}</p>}
+            {!githubError && !githubData && (
+              <p className={`mt-4 text-base ${isDark ? "text-[#95a089]" : "text-[#8c8779]"}`}>getting there...</p>
+            )}
+            {githubData && (
+              <ul className="mt-6 grid gap-4 md:grid-cols-2">
+                {githubData.repos.map((repo) => (
+                  <li key={repo.id} className={`rounded-xl p-4 ${isDark ? "border border-[#2e3a31] bg-[#12181d]" : "border border-[#d8d4be] bg-[#f8f4d6]"}`}>
+                    <div className="flex items-start justify-between gap-3">
+                      <a
+                        href={repo.html_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`font-semibold transition-colors ${isDark ? "text-[#e6dcc8] hover:text-[#8ed26f]" : "text-[#2f3134] hover:text-[#7b6f57]"}`}
+                      >
+                        {repo.name}
+                      </a>
+                      <span className={`text-xs ${isDark ? "text-[#95a089]" : "text-[#a7a995]"}`}>★ {repo.stargazers_count}</span>
+                    </div>
+                    <p className={`mt-2 text-base ${isDark ? "text-[#c8bca5]" : "text-[#64615b]"}`}>
+                      {repo.description || "No description provided yet."}
+                    </p>
+                    <div className={`mt-3 flex items-center gap-3 text-xs ${isDark ? "text-[#95a089]" : "text-[#a7a995]"}`}>
+                      {repo.language && <span>{repo.language}</span>}
+                      <span>Updated {new Date(repo.updated_at).toLocaleDateString()}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+          <section>
+            <h2 className={`text-2xl font-semibold ${isDark ? "text-[#e6dcc8]" : "text-[#2f3134]"}`}>Experience</h2>
+            <ul className={`mt-4 space-y-3 ${isDark ? "text-[#c8bca5]" : "text-[#64615b]"}`}>
+              <li className={`border-l-2 pl-4 transition-colors ${isDark ? "border-[#2e3a31] hover:border-[#8ed26f]" : "border-[#cfceb5] hover:border-[#8c8779]"}`}>
+                <span className={`font-medium ${isDark ? "text-[#e6dcc8]" : "text-[#2f3134]"}`}>Machine Learning Intern</span> @ AlaricTech{" "}
+                <span className={`text-lg ${isDark ? "text-[#95a089]" : "text-[#8c8779]"}`}>[oct 25&apos; - dec 25&apos;]</span>
+              </li>
+              <li className={`border-l-2 pl-4 transition-colors ${isDark ? "border-[#2e3a31] hover:border-[#8ed26f]" : "border-[#cfceb5] hover:border-[#8c8779]"}`}>
+                <span className={`font-medium ${isDark ? "text-[#e6dcc8]" : "text-[#2f3134]"}`}>AR Developer</span> @ GDG KIET{" "}
+                <span className={`text-lg ${isDark ? "text-[#95a089]" : "text-[#8c8779]"}`}>[jan 24&apos; - jan 25&apos;]</span>
+              </li>
+              <li className={`border-l-2 pl-4 transition-colors ${isDark ? "border-[#2e3a31] hover:border-[#8ed26f]" : "border-[#cfceb5] hover:border-[#8c8779]"}`}>
+                <span className={`font-medium ${isDark ? "text-[#e6dcc8]" : "text-[#2f3134]"}`}>Intern</span> @ TBI KIET{" "}
+                <span className={`text-lg ${isDark ? "text-[#95a089]" : "text-[#8c8779]"}`}>[may 24&apos; - june 24&apos;]</span>
+              </li>
+              <li className={`border-l-2 pl-4 transition-colors ${isDark ? "border-[#2e3a31] hover:border-[#8ed26f]" : "border-[#cfceb5] hover:border-[#8c8779]"}`}>
+                <span className={`font-medium ${isDark ? "text-[#e6dcc8]" : "text-[#2f3134]"}`}>Gaudmire</span> @ buildspace{" "}
+                <span className={`text-lg ${isDark ? "text-[#95a089]" : "text-[#8c8779]"}`}>[may 24&apos; - july 24&apos;]</span>
+              </li>
+            </ul>
           </section>
 
-          {/*social links */}
-          <footer className="pt-8 border-t border-zinc-800">
-            <div className="flex justify-center space-x-6">
-              <a
-                href="https://github.com/11PRIMUS"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-zinc-400 hover:text-green-400 transition-colors"
-              >
-                <Github size={24} />
-              </a>
-              <a
-                href="https://www.linkedin.com/in/11alok/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-zinc-400 hover:text-blue-400 transition-colors"
-              >
-                <Linkedin size={24} />
-              </a>
-              <a
-                href="https://x.com/the_neuralgeek"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-zinc-400 hover:text-purple-400 transition-colors"
-              >
-                <X size={24} />
-              </a>
-              <a href="mailto:alok28pa@gmail.com" className="text-zinc-400 hover:text-red-400 transition-colors">
-                <Mail size={24} />
-              </a>
-            </div>
-            <p className="text-center text-zinc-500 mt-4 text-sm">© {new Date().getFullYear()} Alok -_-</p>
-          </footer>
+          <section>
+            <h2 className={`text-2xl font-semibold ${isDark ? "text-[#e6dcc8]" : "text-[#2f3134]"}`}>Projects</h2>
+            <ul className={`mt-4 space-y-4 ${isDark ? "text-[#c8bca5]" : "text-[#64615b]"}`}>
+              <li>
+                <a
+                  href="https://www.meera.social/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`font-semibold transition-colors ${isDark ? "text-[#e6dcc8] hover:text-[#8ed26f]" : "text-[#2f3134] hover:text-[#7b6f57]"}`}
+                >
+                  MEERA - AI Companion
+                </a>
+                <ul className="mt-1 text-base">
+                  <li>it isn&apos;t just another chatbot. It&apos;s an emotional companion made to truly listen and remembers about user.</li>
+                  <li>uses fine tunned Qwen3-32B with qlora adapters for empathetic dialogue.</li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  href="https://github.com/codeEnthusiast21/BrightWalkHackTU"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`font-semibold transition-colors ${isDark ? "text-[#e6dcc8] hover:text-[#8ed26f]" : "text-[#2f3134] hover:text-[#7b6f57]"}`}
+                >
+                  BrightWalk
+                </a>
+                <ul className="mt-1 text-base">
+                  <li>visual assistant for impaired person, it describes what it sees using person&apos;s pov.</li>
+                  <li>mobile application built for visually impaired to help me naviagte and do their task easily.</li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  href="https://github.com/aalok-p/SAR-image-Colorization"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`font-semibold transition-colors ${isDark ? "text-[#e6dcc8] hover:text-[#8ed26f]" : "text-[#2f3134] hover:text-[#7b6f57]"}`}
+                >
+                  SAR image Colorization
+                </a>
+                <ul className="mt-1 text-base">
+                  <li>uses conditional GAN combining a ResUNet generator and PatchGAN discrimator to convert noisy sar(grey) images into colored rgb images.</li>
+                  <li>have multi-term objective (L1 reconstruction loss with weight 100) to stabilize supervised SAR–RGB translation.</li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  href="https://github.com/aalok-p/Pratham"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`font-semibold transition-colors ${isDark ? "text-[#e6dcc8] hover:text-[#8ed26f]" : "text-[#2f3134] hover:text-[#7b6f57]"}`}
+                >
+                  Pratham
+                </a>
+                <ul className="mt-1 text-base">
+                  <li>a custom CNN to classify MRI scans for brain tumor detection with high accuracy.</li>
+                  <li>integrated grad-cam visualizer for easier interpretion, with 2d-1d transformation pipeline.</li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  href="https://github.com/Avdhesh-Varshney/AI-Code"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`font-semibold transition-colors ${isDark ? "text-[#e6dcc8] hover:text-[#8ed26f]" : "text-[#2f3134] hover:text-[#7b6f57]"}`}
+                >
+                  AI-Code
+                </a>
+                <p className="mt-1 text-base">an open-source project designed to help individuals learn and understand fundamental code implementations of various AI algorithms</p>
+              </li>
+            </ul>
+          </section>
 
-          {/* Command prompt */}
-          <div className="flex items-center gap-2 pt-4">
-            <span className="text-pink-500">$</span>
-            <span className="h-5 w-2 bg-green-400 inline-block animate-pulse" />
-          </div>
+          <section className="space-y-8">
+            <div>
+              <h2 className={`text-2xl font-semibold ${isDark ? "text-[#e6dcc8]" : "text-[#2f3134]"}`}>things I am learning</h2>
+              <p className={`mt-2 text-base ${isDark ? "text-[#c8bca5]" : "text-[#64615b]"}`}>
+                you will find me learning LLM training, inference optimization and a lot of kernel code, also learning about what a frontier labs require, If I am not learning and creating then you can find me in 9-5 lec    (ps- sed emoji).
+              </p>
+            </div>
+            <div>
+              <h2 className={`text-2xl font-semibold ${isDark ? "text-[#e6dcc8]" : "text-[#2f3134]"}`}>let&apos;s connect</h2>
+              <p className={`mt-2 text-base ${isDark ? "text-[#c8bca5]" : "text-[#64615b]"}`}>
+                <a
+                  href="mailto:alok28pa@gmail.com"
+                  className={`${isDark ? "text-[#8ed26f]" : "text-blue-600"} underline underline-offset-2`}
+                >
+                  email
+                </a>{" "}
+                or{" "}
+                <a
+                  href="https://x.com/the_neuralgeek"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${isDark ? "text-base text-[#8ed26f]" : "text-blue-600"} underline underline-offset-2`}
+                >
+                  X
+                </a>{" "}
+                work best for me; I&apos;ll get back to you as soon as I can.
+              </p>
+              <p className={`mt-2 text-base ${isDark ? "text-[#c8bca5]" : "text-[#64615b]"}`}>
+                Hmm... what else?
+              </p>
+              <p className={`mt-2 text-base ${isDark ? "text-[#c8bca5]" : "text-[#64615b]"}`}>
+                You can also check out my{" "}
+                <a
+                  href="#"
+                  className={`${isDark ? "text-base text-[#8ed26f]" : "text-blue-600"} underline underline-offset-2`}
+                >
+                  blog
+                </a>{" "}
+                for project updates and worklogs, or just throw me a message on the aforementioned links if you wanna chat about stuff :)
+              </p>
+            </div>
+          </section>
         </div>
       </main>
     </div>

@@ -1,8 +1,8 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { JetBrains_Mono } from 'next/font/google'
+import { Newsreader } from 'next/font/google'
 
-const mono = JetBrains_Mono({ subsets: ['latin'] })
+const newsreader = Newsreader({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Alok ',
@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={mono.className}>{children}</body>
+      <body className={newsreader.className}>{children}</body>
     </html>
   )
 }
