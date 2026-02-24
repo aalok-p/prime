@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Moon, Sun } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 
 type GithubRepo = {
   id: number
@@ -27,9 +28,16 @@ type GithubData = {
 }
 
 export default function Page() {
-  const [isDark, setIsDark] = useState(false)
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window === "undefined") return false
+    return window.localStorage.getItem("theme") === "dark"
+  })
   const [githubData, setGithubData] = useState<GithubData | null>(null)
   const [githubError, setGithubError] = useState<string | null>(null)
+
+  useEffect(() => {
+    window.localStorage.setItem("theme", isDark ? "dark" : "light")
+  }, [isDark])
 
   useEffect(() => {
     let active = true
@@ -71,19 +79,20 @@ export default function Page() {
           : undefined
       }
     >
-      <main className="px-4 py-10 md:py-16 max-w-3xl mx-auto">
+      <main className="px-4 py-10 md:py-14">
+        <div className="mx-auto max-w-5xl">
         <header className="space-y-9">
             <nav className={`flex items-center justify-between rounded-xl px-4 py-3 text-base ${isDark ? "bg-[#12171d] text-[#c8bca5]" : "text-[#64615b]"}`}>
               <div className="flex items-center gap-6">
-              <a href="#" className={`transition-colors ${isDark ? "hover:text-[#8ed26f]" : "hover:text-[#2f3134]"}`}>
+              <Link href="/" className={`transition-colors ${isDark ? "hover:text-[#8ed26f]" : "hover:text-[#2f3134]"}`}>
                 Home
-              </a>
-              <a href="#" className={`transition-colors ${isDark ? "hover:text-[#8ed26f]" : "hover:text-[#2f3134]"}`}>
+              </Link>
+              <Link href="/notes" className={`transition-colors ${isDark ? "hover:text-[#8ed26f]" : "hover:text-[#2f3134]"}`}>
                 Notes
-              </a>
-              <a href="#" className={`transition-colors ${isDark ? "hover:text-[#8ed26f]" : "hover:text-[#2f3134]"}`}>
+              </Link>
+              <Link href="/blog" className={`transition-colors ${isDark ? "hover:text-[#8ed26f]" : "hover:text-[#2f3134]"}`}>
                 Blog
-              </a>
+              </Link>
               </div>
               <button
                 type="button"
@@ -349,6 +358,7 @@ export default function Page() {
               </p>
             </div>
           </section>
+        </div>
         </div>
       </main>
     </div>
