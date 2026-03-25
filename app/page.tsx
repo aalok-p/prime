@@ -248,6 +248,20 @@ export default function Page() {
             <ul className={`mt-4 space-y-4 ${isDark ? "text-[#c8bca5]" : "text-[#64615b]"}`}>
               <li>
                 <a
+                  href="https://github.com/aalok-p/watcher"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`font-semibold transition-colors ${isDark ? "text-[#e6dcc8] hover:text-[#8ed26f]" : "text-[#2f3134] hover:text-[#7b6f57]"}`}
+                >
+                  Watcher - GPU Visualizer 
+                </a>
+                <ul className="mt-1 text-base">
+                  <li>built for linux to visualize GPU usage (VRAM, Temperature, Gpu util and Power).</li>
+                  <li>diagnoses bottlenecks, and explains fixes in plain English.</li>
+                </ul>
+              </li>
+              <li>
+                <a
                   href="https://www.meera.social/"
                   target="_blank"
                   rel="noopener noreferrer"
