@@ -136,7 +136,7 @@ export default function Page() {
                 <a href="https://www.kaggle.com/primus11" target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1 transition-colors ${isDark ? "text-[#8ed26f] hover:text-[#a4de8a]" : "text-blue-600 hover:text-blue-700"}`}>
                   Kaggle <span aria-hidden="true">↗</span>
                 </a>
-                <a href="https://drive.google.com/file/d/1GCaRog01oYG5qqrbSXCzJD8aNUNV-Ymr/view?usp=sharing" target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1 transition-colors ${isDark ? "text-[#8ed26f] hover:text-[#a4de8a]" : "text-blue-600 hover:text-blue-700"}`}>
+                <a href="https://drive.google.com/file/d/18NSRzzTENOTkRm3urSWq6_vuK1xIgaNI/view?usp=sharing" target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1 transition-colors ${isDark ? "text-[#8ed26f] hover:text-[#a4de8a]" : "text-blue-600 hover:text-blue-700"}`}>
                   Resume <span aria-hidden="true">↗</span>
                 </a>
               </div>
