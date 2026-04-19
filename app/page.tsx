@@ -136,7 +136,7 @@ export default function Page() {
                 <a href="https://www.kaggle.com/primus11" target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1 transition-colors ${isDark ? "text-[#8ed26f] hover:text-[#a4de8a]" : "text-blue-600 hover:text-blue-700"}`}>
                   Kaggle <span aria-hidden="true">↗</span>
                 </a>
-                <a href="https://drive.google.com/file/d/18NSRzzTENOTkRm3urSWq6_vuK1xIgaNI/view?usp=sharing" target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1 transition-colors ${isDark ? "text-[#8ed26f] hover:text-[#a4de8a]" : "text-blue-600 hover:text-blue-700"}`}>
+                <a href="https://drive.google.com/file/d/1wmuI4PQagkfBn9kczkMjtX8eyHBJQljI/view?usp=sharing" target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1 transition-colors ${isDark ? "text-[#8ed26f] hover:text-[#a4de8a]" : "text-blue-600 hover:text-blue-700"}`}>
                   Resume <span aria-hidden="true">↗</span>
                 </a>
               </div>
@@ -248,6 +248,20 @@ export default function Page() {
             <ul className={`mt-4 space-y-4 ${isDark ? "text-[#c8bca5]" : "text-[#64615b]"}`}>
               <li>
                 <a
+                  href="https://aaloksan-kernel.hf.space/ui/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`font-semibold transition-colors ${isDark ? "text-[#e6dcc8] hover:text-[#8ed26f]" : "text-[#2f3134] hover:text-[#7b6f57]"}`}
+                >
+                  Kernel Writer
+                </a>
+                <ul className="mt-1 text-base">
+                  <li>converts raw cuda kernel code into peak perfoming CUDA kernel code across training epsidoes.</li>
+                  <li>grading framework with rule-based check for RL agent with weighted reward calculation. </li>
+                </ul>
+              </li>
+              <li>
+                <a
                   href="https://github.com/aalok-p/watcher"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -272,20 +286,6 @@ export default function Page() {
                 <ul className="mt-1 text-base">
                   <li>it isn&apos;t just another chatbot. It&apos;s an emotional companion made to truly listen and remembers about user.</li>
                   <li>uses fine tunned Qwen3-32B with qlora adapters for empathetic dialogue.</li>
-                </ul>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/codeEnthusiast21/BrightWalkHackTU"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`font-semibold transition-colors ${isDark ? "text-[#e6dcc8] hover:text-[#8ed26f]" : "text-[#2f3134] hover:text-[#7b6f57]"}`}
-                >
-                  BrightWalk
-                </a>
-                <ul className="mt-1 text-base">
-                  <li>visual assistant for impaired person, it describes what it sees using person&apos;s pov.</li>
-                  <li>mobile application built for visually impaired to help me naviagte and do their task easily.</li>
                 </ul>
               </li>
               <li>
