@@ -6,6 +6,13 @@ import Link from "next/link"
 
 const blogPosts: Array<{ title: string; href: string; date: string; description?: string }> = [
   {
+    title: "Watcher - GPU health coach",
+    href: "https://open.substack.com/pub/aaloklogs/p/watcher-gpu-health-coach?r=6rls0n&utm_campaign=post&utm_medium=web",
+    date: "05 apr 2026",
+    description:
+      "we all have this question Why is my GPU stuttering? Every developer and gamer has asked this at 2 AM. You check nvidia-smi, see raw numbers like 82°C, 87% utilization, and 9.2GB VRAM, but you have no idea if that is critical or fine. You are left Googling while your training crawls or your game lags. nvidia-smi gives you data. Watcher gives you answers. Instead of: VRAM: 91% and a red alert",
+  },
+  {
     title: "The new way to witness OCR: DeepSeek OCR",
     href: "https://aaloklogs.substack.com/p/deepseek-ocr",
     date: "02 nov 2025",
