@@ -225,6 +225,10 @@ export default function Page() {
             <h2 className={`text-2xl font-semibold ${isDark ? "text-[#e6dcc8]" : "text-[#2f3134]"}`}>Experience</h2>
             <ul className={`mt-4 space-y-3 ${isDark ? "text-[#c8bca5]" : "text-[#64615b]"}`}>
               <li className={`border-l-2 pl-4 transition-colors ${isDark ? "border-[#2e3a31] hover:border-[#8ed26f]" : "border-[#cfceb5] hover:border-[#8c8779]"}`}>
+                <span className={`font-medium ${isDark ? "text-[#e6dcc8]" : "text-[#2f3134]"}`}>AI Engineer Intern</span> @ Oxlo.ai{" "}
+                <span className={`text-lg ${isDark ? "text-[#95a089]" : "text-[#8c8779]"}`}>[april 26&apos; - present&apos;]</span>
+              </li>
+              <li className={`border-l-2 pl-4 transition-colors ${isDark ? "border-[#2e3a31] hover:border-[#8ed26f]" : "border-[#cfceb5] hover:border-[#8c8779]"}`}>
                 <span className={`font-medium ${isDark ? "text-[#e6dcc8]" : "text-[#2f3134]"}`}>Machine Learning Intern</span> @ AlaricTech{" "}
                 <span className={`text-lg ${isDark ? "text-[#95a089]" : "text-[#8c8779]"}`}>[oct 25&apos; - dec 25&apos;]</span>
               </li>
